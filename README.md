@@ -1,4 +1,4 @@
-# CCNA Progress Tracker
+# Summer of CCNA 2026 Progress Tracker
 
 A tiny self-hosted web app for tracking the checklist from `Summer of CCNA Study Plan.pdf`.
 
@@ -10,6 +10,8 @@ The app is intentionally simple:
 - `deploy/` contains example Ubuntu `systemd` and nginx configuration.
 
 Progress is saved by writing JSON to disk. On a server, keep that writable data file outside the application folder so app updates do not overwrite it.
+
+![CCNA Progress Tracker screenshot](images/ss1.png)
 
 ## Requirements
 
