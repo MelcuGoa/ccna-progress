@@ -1,0 +1,19 @@
+[Unit]
+Description=CCNA Progress Tracker
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/ccna-progress
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=8088
+Environment=CCNA_DATA_FILE=/var/lib/ccna-progress/checklist.json
+ExecStart=/usr/bin/node /opt/ccna-progress/server.js
+Restart=always
+RestartSec=5
+User=ccna-progress
+Group=ccna-progress
+
+[Install]
+WantedBy=multi-user.target

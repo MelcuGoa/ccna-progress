@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#111923" />
+    <title>CCNA Progress</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Summer of CCNA</p>
+          <h1 id="planTitle">CCNA Progress</h1>
+        </div>
+        <div class="status">
+          <span id="saveState">Loading</span>
+          <button id="saveButton" type="button">Save</button>
+        </div>
+      </header>
+
+      <section class="summary" aria-label="Progress summary">
+        <div>
+          <span id="completeCount">0</span>
+          <small>complete</small>
+        </div>
+        <div>
+          <span id="remainingCount">0</span>
+          <small>remaining</small>
+        </div>
+        <div>
+          <span id="percentCount">0%</span>
+          <small>progress</small>
+        </div>
+        <div>
+          <span id="deadlineLabel">-</span>
+          <small>deadline</small>
+        </div>
+      </section>
+
+      <section class="controls" aria-label="Checklist controls">
+        <input id="searchInput" type="search" placeholder="Search lessons, labs, quizzes" />
+        <select id="weekFilter" aria-label="Week filter"></select>
+        <select id="statusFilter" aria-label="Status filter">
+          <option value="all">All items</option>
+          <option value="open">Open</option>
+          <option value="done">Done</option>
+        </select>
+      </section>
+
+      <div class="progress-track" aria-hidden="true">
+        <div id="progressBar"></div>
+      </div>
+
+      <section id="weeks" class="weeks" aria-live="polite"></section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
