@@ -81,8 +81,8 @@ p {
 
 h1 {
   margin-bottom: 0;
-  font-size: clamp(2rem, 4vw, 4.4rem);
-  line-height: 0.95;
+  font-size: clamp(1.6rem, 3vw, 2.8rem);
+  line-height: 1.05;
   letter-spacing: 0;
 }
 
@@ -94,7 +94,11 @@ h1 {
   white-space: nowrap;
 }
 
-button {
+button,
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 0;
   border-radius: 6px;
   background: linear-gradient(135deg, var(--green), var(--teal));
@@ -107,14 +111,17 @@ button {
   transition:
     transform 140ms ease,
     filter 140ms ease;
+  text-decoration: none;
 }
 
-button:hover {
+button:hover,
+.button-link:hover {
   filter: brightness(1.07);
   transform: translateY(-1px);
 }
 
 button:focus-visible,
+.button-link:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
@@ -122,7 +129,8 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
-button.secondary {
+button.secondary,
+.button-link.secondary {
   background: #223140;
   color: var(--ink);
   box-shadow: none;
