@@ -51,12 +51,15 @@ Replace `ccna.example.com` with your own domain.
 
 ### 1. Install Node.js And Nginx
 
-Install Node.js 20 or newer using your preferred method. For example, after Node is installed:
+Install Node.js 20, npm, and nginx:
 
 ```bash
-node --version
 sudo apt update
-sudo apt install nginx
+sudo apt install -y curl ca-certificates
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs nginx
+node --version
+npm --version
 ```
 
 The included service file uses `/usr/bin/node`. Confirm that path exists:
