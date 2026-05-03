@@ -26,40 +26,43 @@
             rel="noopener noreferrer"
           >Home Base</a>
           <button id="saveButton" type="button">Save</button>
+          <button id="exportButton" class="secondary" type="button" title="Download backup">Export</button>
         </div>
       </header>
 
-      <section class="summary" aria-label="Progress summary">
-        <div>
-          <span id="completeCount">0</span>
-          <small>complete</small>
-        </div>
-        <div>
-          <span id="remainingCount">0</span>
-          <small>remaining</small>
-        </div>
-        <div>
-          <span id="percentCount">0%</span>
-          <small>progress</small>
-        </div>
-        <div>
-          <span id="deadlineLabel">-</span>
-          <small>deadline</small>
-        </div>
-      </section>
+      <div class="sticky-wrapper">
+        <section class="summary" aria-label="Progress summary">
+          <div>
+            <span id="completeCount">0</span>
+            <small>complete</small>
+          </div>
+          <div>
+            <span id="remainingCount">0</span>
+            <small>remaining</small>
+          </div>
+          <div>
+            <span id="percentCount">0%</span>
+            <small>progress</small>
+          </div>
+          <div>
+            <span id="deadlineLabel">-</span>
+            <small>deadline</small>
+          </div>
+        </section>
 
-      <section class="controls" aria-label="Checklist controls">
-        <input id="searchInput" type="search" placeholder="Search lessons, labs, quizzes" />
-        <select id="weekFilter" aria-label="Week filter"></select>
-        <select id="statusFilter" aria-label="Status filter">
-          <option value="all">All items</option>
-          <option value="open">Open</option>
-          <option value="done">Done</option>
-        </select>
-      </section>
+        <section class="controls" aria-label="Checklist controls">
+          <input id="searchInput" type="search" placeholder="Search lessons, labs, quizzes" />
+          <select id="weekFilter" aria-label="Week filter"></select>
+          <select id="statusFilter" aria-label="Status filter">
+            <option value="all">All items</option>
+            <option value="open">Open</option>
+            <option value="done">Done</option>
+          </select>
+        </section>
 
-      <div class="progress-track" aria-hidden="true">
-        <div id="progressBar"></div>
+        <div class="progress-track" aria-hidden="true">
+          <div id="progressBar"></div>
+        </div>
       </div>
 
       <section id="weeks" class="weeks" aria-live="polite"></section>

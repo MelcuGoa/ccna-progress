@@ -43,6 +43,15 @@ textarea {
   padding: 28px 0 56px;
 }
 
+.sticky-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  padding-top: 10px;
+  margin-bottom: 16px;
+}
+
 .topbar,
 .summary,
 .controls,
@@ -239,6 +248,11 @@ textarea::placeholder {
 .day {
   padding: 14px;
   background: linear-gradient(180deg, var(--panel), #0f171f);
+  transition: border-color 200ms ease;
+}
+
+.day.all-done {
+  border-color: var(--green);
 }
 
 .day-head {
@@ -247,11 +261,34 @@ textarea::placeholder {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .day h3 {
   margin-bottom: 3px;
   font-size: 1rem;
+}
+
+.day-content {
+  display: block;
+}
+
+.day.collapsed .day-content {
+  display: none;
+}
+
+.day.collapsed .day-head {
+  margin-bottom: 0;
+}
+
+.day-toggle-icon {
+  display: inline-block;
+  transition: transform 200ms ease;
+  color: var(--muted);
+}
+
+.day.collapsed .day-toggle-icon {
+  transform: rotate(-90deg);
 }
 
 .day small,
@@ -278,9 +315,35 @@ textarea::placeholder {
   line-height: 1.35;
 }
 
+mark {
+  background: rgba(73, 199, 213, 0.3);
+  color: var(--ink);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
 .task.done .task-title {
   color: var(--muted);
   text-decoration: line-through;
+}
+
+.notes-toggle {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--teal);
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+  min-height: auto;
+  box-shadow: none;
+  font-weight: 500;
+}
+
+.notes-toggle:hover {
+  text-decoration: underline;
+  transform: none;
 }
 
 .notes {
@@ -288,6 +351,11 @@ textarea::placeholder {
   min-height: 34px;
   padding: 8px 10px;
   resize: vertical;
+  display: none;
+}
+
+.notes.visible {
+  display: block;
 }
 
 .error {
