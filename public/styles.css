@@ -1,18 +1,19 @@
 :root {
   color-scheme: dark;
-  --bg: #090d12;
-  --bg-soft: #0f151d;
-  --ink: #eef5ef;
-  --muted: #91a09a;
-  --line: #24313c;
-  --panel: #111923;
-  --panel-strong: #172230;
-  --field: #0b1118;
-  --green: #46d58d;
-  --teal: #49c7d5;
+  --bg: #0b0f14;
+  --bg-soft: #121820;
+  --ink: #f0f4f8;
+  --muted: #8a949e;
+  --line: #2d3748;
+  --panel: #161e2a;
+  --panel-strong: #1c2636;
+  --field: #0d121b;
+  --orange: #f27a39;
   --yellow: #f2c35d;
-  --danger: #ff8a78;
-  --shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+  --red: #e04f3f;
+  --accent: var(--orange);
+  --danger: #ff6b6b;
+  --shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -25,8 +26,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(73, 199, 213, 0.12), transparent 34rem),
-    linear-gradient(180deg, var(--bg-soft), var(--bg) 28rem);
+    radial-gradient(circle at top left, rgba(242, 122, 57, 0.12), transparent 40rem),
+    linear-gradient(180deg, var(--bg-soft), var(--bg) 32rem);
   color: var(--ink);
 }
 
@@ -69,13 +70,13 @@ textarea {
   gap: 20px;
   padding: 22px;
   background:
-    linear-gradient(135deg, rgba(70, 213, 141, 0.08), transparent 36%),
+    linear-gradient(135deg, rgba(242, 122, 57, 0.08), transparent 36%),
     var(--panel-strong);
 }
 
 .eyebrow {
   margin: 0 0 6px;
-  color: var(--green);
+  color: var(--orange);
   font-size: 0.78rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -92,7 +93,7 @@ h1 {
   margin-bottom: 0;
   font-size: clamp(1.6rem, 3vw, 2.8rem);
   line-height: 1.05;
-  letter-spacing: 0;
+  letter-spacing: -0.02em;
 }
 
 .status {
@@ -110,13 +111,13 @@ button,
   justify-content: center;
   border: 0;
   border-radius: 6px;
-  background: linear-gradient(135deg, var(--green), var(--teal));
-  color: #07100e;
+  background: linear-gradient(135deg, var(--orange), var(--yellow));
+  color: #0b0f14;
   cursor: pointer;
   min-height: 40px;
   padding: 0 16px;
   font-weight: 800;
-  box-shadow: 0 8px 22px rgba(70, 213, 141, 0.18);
+  box-shadow: 0 8px 22px rgba(242, 122, 57, 0.22);
   transition:
     transform 140ms ease,
     filter 140ms ease;
@@ -125,7 +126,7 @@ button,
 
 button:hover,
 .button-link:hover {
-  filter: brightness(1.07);
+  filter: brightness(1.1);
   transform: translateY(-1px);
 }
 
@@ -134,15 +135,16 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid var(--teal);
+  outline: 2px solid var(--orange);
   outline-offset: 2px;
 }
 
 button.secondary,
 .button-link.secondary {
-  background: #223140;
+  background: var(--panel-strong);
   color: var(--ink);
   box-shadow: none;
+  border: 1px solid var(--line);
 }
 
 .summary {
@@ -208,7 +210,7 @@ textarea::placeholder {
 #progressBar {
   width: 0%;
   height: 100%;
-  background: linear-gradient(90deg, var(--green), var(--teal), var(--yellow));
+  background: linear-gradient(90deg, var(--orange), var(--yellow), var(--red));
   transition: width 180ms ease;
 }
 
@@ -232,6 +234,7 @@ textarea::placeholder {
 .week-header h2 {
   margin: 0;
   font-size: 1.5rem;
+  color: var(--orange);
 }
 
 .week-header p {
@@ -252,7 +255,7 @@ textarea::placeholder {
 }
 
 .day.all-done {
-  border-color: var(--green);
+  border-color: var(--orange);
 }
 
 .day-head {
@@ -267,6 +270,7 @@ textarea::placeholder {
 .day h3 {
   margin-bottom: 3px;
   font-size: 1rem;
+  color: var(--orange);
 }
 
 .day-content {
@@ -307,7 +311,7 @@ textarea::placeholder {
 .task input[type="checkbox"] {
   width: 20px;
   min-height: 20px;
-  accent-color: var(--green);
+  accent-color: var(--orange);
 }
 
 .task-title {
@@ -316,7 +320,7 @@ textarea::placeholder {
 }
 
 mark {
-  background: rgba(73, 199, 213, 0.3);
+  background: rgba(242, 122, 57, 0.35);
   color: var(--ink);
   padding: 0 2px;
   border-radius: 2px;
@@ -331,7 +335,7 @@ mark {
   display: inline-block;
   margin-top: 6px;
   font-size: 0.8rem;
-  color: var(--teal);
+  color: var(--yellow);
   cursor: pointer;
   background: none;
   border: 0;
