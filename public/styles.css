@@ -242,6 +242,33 @@ textarea::placeholder {
   color: var(--muted);
 }
 
+.week-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.collapse-week {
+  width: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  font-size: 1.15rem;
+  line-height: 1;
+  background: var(--panel-strong);
+  color: var(--ink);
+  box-shadow: none;
+  border: 1px solid var(--line);
+}
+
+.week.collapsed {
+  gap: 0;
+}
+
+.week.collapsed .days {
+  display: none;
+}
+
 .days {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -379,6 +406,10 @@ mark {
   .day-head {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .week-actions {
+    align-items: stretch;
   }
 
   .summary,

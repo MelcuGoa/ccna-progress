@@ -159,22 +159,68 @@ Certbot will update nginx and set up certificate renewal.
 
 ## Updating The App
 
-Copy or pull the new app files into `/opt/ccna-progress`, but keep `/var/lib/ccna-progress/checklist.json` intact.
+Production progress should remain in `/var/lib/ccna-progress/checklist.json`. Do not replace that file during app updates unless you intentionally want to reset the checklist.
 
-Then restart the service:
+Before updating, make a timestamped backup:
 
 ```bash
+sudo mkdir -p /var/lib/ccna-progress/backups
+sudo cp /var/lib/ccna-progress/checklist.json "/var/lib/ccna-progress/backups/checklist.$(date +%Y%m%d-%H%M%S).json"
+```
+
+If you deploy by copying files from your workstation, copy the app to a temporary folder first:
+
+```bash
+rsync -av --delete ./ user@your-server:/tmp/ccna-progress/
+```
+
+Then, on the server, sync the app folder without touching the production data file:
+
+```bash
+sudo rsync -av --delete /tmp/ccna-progress/ /opt/ccna-progress/
+sudo chown -R ccna-progress:ccna-progress /opt/ccna-progress
+sudo chown ccna-progress:ccna-progress /var/lib/ccna-progress/checklist.json
+```
+
+If the repository is cloned directly on the server, update it from `/opt/ccna-progress`:
+
+```bash
+cd /opt/ccna-progress
+sudo git pull
+sudo chown -R ccna-progress:ccna-progress /opt/ccna-progress
+sudo chown ccna-progress:ccna-progress /var/lib/ccna-progress/checklist.json
+```
+
+Restart the service and verify health:
+
+```bash
+sudo systemctl restart ccna-progress
+curl http://127.0.0.1:8088/health
+```
+
+Expected response:
+
+```json
+{"ok":true}
+```
+
+If `deploy/ccna-progress.service` changed, copy it again and reload systemd:
+
+```bash
+sudo cp /opt/ccna-progress/deploy/ccna-progress.service /etc/systemd/system/ccna-progress.service
+sudo systemctl daemon-reload
 sudo systemctl restart ccna-progress
 ```
 
-If the deployment files changed, copy the updated service or nginx file again and reload the matching service:
+If `deploy/nginx.conf` changed, copy it again, test nginx, and reload:
 
 ```bash
-sudo systemctl daemon-reload
-sudo systemctl restart ccna-progress
+sudo cp /opt/ccna-progress/deploy/nginx.conf /etc/nginx/sites-available/ccna-progress
 sudo nginx -t
 sudo systemctl reload nginx
 ```
+
+After frontend changes, refresh the browser. If the UI still looks old, unregister the old service worker or clear the site data in the browser; the app also bumps `public/sw.js` cache names when app shell assets need a clean refresh.
 
 ## Backups
 

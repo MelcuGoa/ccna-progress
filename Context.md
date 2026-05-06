@@ -59,9 +59,31 @@ The user-facing app is titled **Summer of CCNA 2026 Progress** and shows the imp
 - `scripts/extract_checklist.py`: PDF-to-checklist extraction script.
 - `deploy/ccna-progress.service`: example production `systemd` unit.
 - `deploy/nginx.conf`: example nginx reverse proxy config.
-- `README.md`: user setup, deployment, update, backup, and troubleshooting instructions.
+- `README.md`: user setup, deployment, update, backup, and troubleshooting instructions. It includes Ubuntu update steps that preserve `/var/lib/ccna-progress/checklist.json`.
 - `images/ss1.png`: screenshot used by the README.
 - `Summer of CCNA Study Plan.pdf`: source PDF for the checklist data.
+
+## Standard Change Workflow
+
+When asked to update this app:
+
+1. Read `Context.md` first for current architecture, workflow, deployment notes, and versioning.
+2. Make the requested application changes with the smallest practical scope.
+3. Update `Context.md` to describe any changed behavior, state, version, deployment requirement, or known risk.
+4. Update user documentation such as `README.md` when setup, deployment, update, or usage behavior changes.
+5. Bump `package.json` according to the SemVer-style convention when the change should be released:
+   - Patch for bug fixes without behavior changes.
+   - Minor for backward-compatible user-facing features.
+   - Major for breaking operational, data, or API changes.
+6. If frontend app shell files change (`public/app.js`, `public/styles.css`, `public/index.html`, manifest, or icons), consider bumping `public/sw.js` `CACHE_NAME` so deployed browsers refresh cached assets cleanly.
+7. Verify with relevant checks. At minimum, run syntax checks for touched JavaScript and hit `/health` when the server is running.
+8. In the final chat response, provide:
+   - What changed.
+   - Verification performed.
+   - Commit summary.
+   - Commit description.
+   - Versioning decision.
+   - Ubuntu update steps, especially how to preserve `/var/lib/ccna-progress/checklist.json`.
 
 ## Local Commands
 
@@ -89,9 +111,21 @@ On Windows PowerShell, the equivalent is:
 $env:HOST="127.0.0.1"; $env:PORT="8088"; $env:CCNA_DATA_FILE="C:\path\to\checklist.json"; npm start
 ```
 
+## Versioning
+
+The project uses SemVer-style package versions:
+
+- Patch releases fix bugs without changing behavior.
+- Minor releases add backward-compatible user-facing features.
+- Major releases introduce breaking operational, data, or API changes.
+
+Current application version: `1.1.0`.
+
+Version `1.1.0` adds week-level collapse controls for a more compact checklist view.
+
 ## package.json
 
-The package is named `ccna-progress`, version `1.0.0`, with description `A small self-hosted CCNA study plan progress tracker.` It is marked `UNLICENSED`.
+The package is named `ccna-progress`, version `1.1.0`, with description `A small self-hosted CCNA study plan progress tracker.` It is marked `UNLICENSED`.
 
 Scripts:
 
@@ -210,6 +244,7 @@ The frontend state object contains:
 - `filters.week`: selected week number as a string or `all`.
 - `filters.status`: `all`, `open`, or `done`.
 - `saveTimer`: debounce timer for auto-save.
+- `collapsedWeeks`: in-memory `Set` of week numbers that are currently collapsed in the UI.
 
 ### App Initialization
 
@@ -237,7 +272,9 @@ Week cards show:
 
 - `Week <number>`
 - `<done> of <total> complete`
+- Small collapse button labeled `-` when expanded and `+` when collapsed
 - `Toggle week` button
+- Day grid, hidden when that week is collapsed
 
 Day panels show:
 
@@ -286,6 +323,13 @@ Toggling a day or week:
 - If any included task is incomplete, all included tasks are marked complete.
 - If every included task is complete, all included tasks are reopened.
 - `completedAt` is set to one shared current ISO timestamp for completed batch updates, or `null` when reopened.
+
+Collapsing a week:
+
+- Uses the small `-` / `+` button in the week header.
+- Stores collapsed state only in frontend memory; it is not persisted to `data/checklist.json`.
+- Hides or shows the week day grid without changing task completion data.
+- Preserves collapse state across normal re-renders while the page session remains loaded.
 
 ### Saving Behavior
 
@@ -366,7 +410,7 @@ Icons:
 
 ### Service Worker
 
-`public/sw.js` uses cache name `ccna-progress-v1`.
+`public/sw.js` uses cache name `ccna-progress-v2`.
 
 App shell cached on install:
 
@@ -379,7 +423,7 @@ App shell cached on install:
 Lifecycle behavior:
 
 - Install opens the cache, adds the app shell, and calls `self.skipWaiting()`.
-- Activate deletes all caches except `ccna-progress-v1` and calls `self.clients.claim()`.
+- Activate deletes all caches except `ccna-progress-v2` and calls `self.clients.claim()`.
 - Fetch handler bypasses any URL whose path starts with `/api/`.
 - Non-API requests use network-first behavior.
 - Successful GET responses are copied into the cache.
@@ -484,6 +528,72 @@ Production progress data should live outside the app folder:
 ```
 
 This prevents app updates from overwriting progress.
+
+## Ubuntu Update Workflow
+
+The production checklist data should remain outside the app folder:
+
+```text
+/var/lib/ccna-progress/checklist.json
+```
+
+Before updating the app on Ubuntu, back up the production checklist:
+
+```bash
+sudo mkdir -p /var/lib/ccna-progress/backups
+sudo cp /var/lib/ccna-progress/checklist.json "/var/lib/ccna-progress/backups/checklist.$(date +%Y%m%d-%H%M%S).json"
+```
+
+If deploying from a workstation with `rsync`:
+
+```bash
+rsync -av --delete ./ user@your-server:/tmp/ccna-progress/
+```
+
+Then run on the server:
+
+```bash
+sudo rsync -av --delete /tmp/ccna-progress/ /opt/ccna-progress/
+sudo chown -R ccna-progress:ccna-progress /opt/ccna-progress
+sudo chown ccna-progress:ccna-progress /var/lib/ccna-progress/checklist.json
+sudo systemctl restart ccna-progress
+curl http://127.0.0.1:8088/health
+```
+
+If updating from a git clone on the server:
+
+```bash
+cd /opt/ccna-progress
+sudo git pull
+sudo chown -R ccna-progress:ccna-progress /opt/ccna-progress
+sudo chown ccna-progress:ccna-progress /var/lib/ccna-progress/checklist.json
+sudo systemctl restart ccna-progress
+curl http://127.0.0.1:8088/health
+```
+
+Expected health response:
+
+```json
+{"ok":true}
+```
+
+If `deploy/ccna-progress.service` changed:
+
+```bash
+sudo cp /opt/ccna-progress/deploy/ccna-progress.service /etc/systemd/system/ccna-progress.service
+sudo systemctl daemon-reload
+sudo systemctl restart ccna-progress
+```
+
+If `deploy/nginx.conf` changed:
+
+```bash
+sudo cp /opt/ccna-progress/deploy/nginx.conf /etc/nginx/sites-available/ccna-progress
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+After frontend changes, refresh the browser. If old UI assets still appear, clear the browser site data or unregister the old service worker. The app should bump `public/sw.js` `CACHE_NAME` when app shell assets change and a clean cache migration is needed.
 
 ### systemd Service
 

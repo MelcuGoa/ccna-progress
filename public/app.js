@@ -6,6 +6,7 @@ const state = {
     status: "all",
   },
   saveTimer: null,
+  collapsedWeeks: new Set(),
 };
 
 const els = {
@@ -115,15 +116,26 @@ function render() {
 
     const weekTasks = week.days.flatMap((day) => day.tasks);
     const weekDone = weekTasks.filter((task) => task.completed).length;
+    const collapsed = state.collapsedWeeks.has(String(week.number));
+    weekEl.classList.toggle("collapsed", collapsed);
     weekEl.innerHTML = `
       <div class="week-header">
         <div>
           <h2>Week ${week.number}</h2>
           <p data-week-stats="${week.number}">${weekDone} of ${weekTasks.length} complete</p>
         </div>
-        <button class="secondary" type="button" data-week="${week.number}">
-          Toggle week
-        </button>
+        <div class="week-actions">
+          <button
+            class="collapse-week"
+            type="button"
+            data-collapse-week="${week.number}"
+            aria-expanded="${collapsed ? "false" : "true"}"
+            aria-label="${collapsed ? "Expand week" : "Collapse week"}"
+          >${collapsed ? "+" : "-"}</button>
+          <button class="secondary" type="button" data-week="${week.number}">
+            Toggle week
+          </button>
+        </div>
       </div>
       <div class="days"></div>
     `;
@@ -304,11 +316,22 @@ function bindEvents() {
   });
 
   els.weeks.addEventListener("click", (event) => {
+    const collapseWeekButton = event.target.closest("[data-collapse-week]");
     const weekNumber = event.target.dataset.week;
     const dayDate = event.target.dataset.day;
     const toggleDay = event.target.closest("[data-toggle-day]");
     const toggleNotes = event.target.dataset.toggleNotes;
 
+    if (collapseWeekButton) {
+      const weekNumberToCollapse = collapseWeekButton.dataset.collapseWeek;
+      if (state.collapsedWeeks.has(weekNumberToCollapse)) {
+        state.collapsedWeeks.delete(weekNumberToCollapse);
+      } else {
+        state.collapsedWeeks.add(weekNumberToCollapse);
+      }
+      render();
+      return;
+    }
     if (weekNumber) {
       const week = state.plan.weeks.find((item) => String(item.number) === weekNumber);
       const tasks = week.days.flatMap((day) => day.tasks);
