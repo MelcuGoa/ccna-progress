@@ -119,13 +119,14 @@ The project uses SemVer-style package versions:
 - Minor releases add backward-compatible user-facing features.
 - Major releases introduce breaking operational, data, or API changes.
 
-Current application version: `1.1.0`.
+Current application version: `1.1.1`.
 
 Version `1.1.0` adds week-level collapse controls for a more compact checklist view.
+Version `1.1.1` fixes note autosave so open note editors stay visible and focused while typing.
 
 ## package.json
 
-The package is named `ccna-progress`, version `1.1.0`, with description `A small self-hosted CCNA study plan progress tracker.` It is marked `UNLICENSED`.
+The package is named `ccna-progress`, version `1.1.1`, with description `A small self-hosted CCNA study plan progress tracker.` It is marked `UNLICENSED`.
 
 Scripts:
 
@@ -245,6 +246,7 @@ The frontend state object contains:
 - `filters.status`: `all`, `open`, or `done`.
 - `saveTimer`: debounce timer for auto-save.
 - `collapsedWeeks`: in-memory `Set` of week numbers that are currently collapsed in the UI.
+- `expandedNotes`: in-memory `Set` of task IDs whose note editors are currently visible.
 
 ### App Initialization
 
@@ -316,6 +318,7 @@ Editing notes:
 
 - Finds the task by `data-notes`.
 - Updates `task.notes`.
+- Keeps the note editor marked as expanded while typing.
 - Queues an auto-save without re-rendering the textarea.
 
 Toggling a day or week:
@@ -346,7 +349,7 @@ Collapsing a week:
 - Sends `PUT /api/checklist` with the full plan as JSON.
 - On success, replaces local state with the server response.
 - Sets status to `Saved <HH:MM>`.
-- Re-renders the app.
+- Does not re-render the app on save success, which prevents autosave from hiding or blurring an open note editor while the user is typing.
 - On failure, displays the error in the status label with the `error` class.
 
 The Save button triggers `saveNow()` immediately.
@@ -410,7 +413,7 @@ Icons:
 
 ### Service Worker
 
-`public/sw.js` uses cache name `ccna-progress-v2`.
+`public/sw.js` uses cache name `ccna-progress-v3`.
 
 App shell cached on install:
 
@@ -423,7 +426,7 @@ App shell cached on install:
 Lifecycle behavior:
 
 - Install opens the cache, adds the app shell, and calls `self.skipWaiting()`.
-- Activate deletes all caches except `ccna-progress-v2` and calls `self.clients.claim()`.
+- Activate deletes all caches except `ccna-progress-v3` and calls `self.clients.claim()`.
 - Fetch handler bypasses any URL whose path starts with `/api/`.
 - Non-API requests use network-first behavior.
 - Successful GET responses are copied into the cache.

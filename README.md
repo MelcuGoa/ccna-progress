@@ -11,6 +11,8 @@ The app is intentionally simple:
 
 Progress is saved by writing JSON to disk. On a server, keep that writable data file outside the application folder so app updates do not overwrite it.
 
+Task notes autosave while you type, and open note editors stay visible during autosave.
+
 ![CCNA Progress Tracker screenshot](images/ss1.png)
 
 ## Requirements

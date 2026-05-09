@@ -1,4 +1,4 @@
-const CACHE_NAME = "ccna-progress-v2";
+const CACHE_NAME = "ccna-progress-v3";
 const APP_SHELL = ["/", "/index.html", "/styles.css", "/app.js", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {

@@ -7,6 +7,7 @@ const state = {
   },
   saveTimer: null,
   collapsedWeeks: new Set(),
+  expandedNotes: new Set(),
 };
 
 const els = {
@@ -166,15 +167,16 @@ function render() {
       const contentEl = dayEl.querySelector(".day-content");
       for (const task of visibleTasks) {
         const taskEl = document.createElement("label");
+        const notesExpanded = state.expandedNotes.has(task.id);
         taskEl.className = `task${task.completed ? " done" : ""}`;
         taskEl.innerHTML = `
           <input type="checkbox" data-task="${task.id}" ${task.completed ? "checked" : ""} />
           <span>
             <span class="task-title">${highlight(task.title)}</span>
             <button class="notes-toggle" type="button" data-toggle-notes="${task.id}">
-              ${task.notes ? "View/Edit Notes" : "+ Add Note"}
+              ${notesExpanded ? "Hide Notes" : task.notes ? "View/Edit Notes" : "+ Add Note"}
             </button>
-            <textarea class="notes" data-notes="${task.id}" placeholder="Notes">${task.notes || ""}</textarea>
+            <textarea class="notes${notesExpanded ? " visible" : ""}" data-notes="${task.id}" placeholder="Notes">${task.notes || ""}</textarea>
           </span>
         `;
         contentEl.appendChild(taskEl);
@@ -208,7 +210,6 @@ async function saveNow() {
 
   state.plan = await response.json();
   setSaveState(`Saved ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`);
-  render();
 }
 
 function exportData() {
@@ -311,6 +312,7 @@ function bindEvents() {
       const match = allTasks().find(({ task }) => task.id === taskId);
       if (!match) return;
       match.task.notes = event.target.value;
+      state.expandedNotes.add(taskId);
       queueSave();
     }
   });
@@ -348,7 +350,13 @@ function bindEvents() {
       const notesEl = document.querySelector(`.notes[data-notes="${toggleNotes}"]`);
       if (notesEl) {
         notesEl.classList.toggle("visible");
-        event.target.textContent = notesEl.classList.contains("visible") ? "Hide Notes" : "View/Edit Notes";
+        const expanded = notesEl.classList.contains("visible");
+        if (expanded) {
+          state.expandedNotes.add(toggleNotes);
+        } else {
+          state.expandedNotes.delete(toggleNotes);
+        }
+        event.target.textContent = expanded ? "Hide Notes" : "View/Edit Notes";
       }
     }
   });
